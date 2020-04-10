@@ -22,6 +22,12 @@ public class HangMan implements KeyListener{
 	Stack<String> words = new Stack<String>();
 	Utilities utis = new Utilities();
 	ArrayList<Character> wordList = new ArrayList<Character>();
+	ArrayList<Character> inverseWordList = new ArrayList<Character>();
+	int numOfWords;
+	boolean gameReapeat = true;
+	boolean newWord = true;
+	boolean lockA = false;
+	boolean lockB = false;
 	
 	void runOnce() {
 		panel.add(lifesOut);
@@ -32,14 +38,15 @@ public class HangMan implements KeyListener{
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.pack();
 		
-		run();
+		runPerGame();
 	}
 	
-	void run() {
+	void runPerGame() {
+		while (gameReapeat) {
 		lifes = 5;
 		words = new Stack<String>();
 		
-		int numOfWords = Integer.parseInt(JOptionPane.showInputDialog("Enter number of words: "));
+		numOfWords = Integer.parseInt(JOptionPane.showInputDialog("Enter number of words: "));
 		for (int i = 0; i < numOfWords; i++) {
 			boolean gotWord = false;
 			while (!gotWord) {
@@ -52,33 +59,81 @@ public class HangMan implements KeyListener{
 			
 		}
 		
-		word = words.pop();
-		lines = "";
-		for (int i = 0; i < word.length(); i++) {
-			lines = lines + "_";
+		runPerWord();
+		
+		lockA = true;
+		while (lockA) {
+			//System.out.print("!");
 		}
-		wordOut.setText(" Word: " + lines);
-		lifesOut.setText("Lifes: " + lifes);
+		
+		String a = JOptionPane.showInputDialog("Play again? (y/n)");
+		if (a == "n") {
+			gameReapeat = false;
+		}
+		}
+	}
+	
+	void runPerWord() {
+		for (int u = 0; u < words.size(); u++) {
+			frame.pack();
+			lifes = 5;
+			inverseWordList = new ArrayList<Character>();
+			
+			word = words.pop();
+			lines = "";
+			for (int i = 0; i < word.length(); i++) {
+				lines = lines + "_";
+				inverseWordList.add('_');
+			}
+			lines = inverseWordList.toString();
+			wordOut.setText(" Word: " + lines);
+			lifesOut.setText("Lifes: " + lifes);
+			frame.pack();
+		
+			for (int i = 0; i < word.length(); i++) {
+				wordList.add(word.charAt(i));
+			}
+			lockB = true;
+			while (lockB) {
+				//System.out.print(".");
+			}
+		}
+		lockA = false;
 	}
 
 	@Override
 	public void keyPressed(KeyEvent e) {
 		char keyVal = e.getKeyChar();
-		wordList = new ArrayList<Character>();
-		for (int i = 0; i < word.length(); i++) {
-			wordList.add(word.charAt(i));
-		}
 		if (wordList.indexOf(keyVal) == -1) {
 			lifes = lifes - 1;
 			lifesOut.setText("Lifes: " + lifes);
-		}
-		else {
-			while (wordList.indexOf(keyVal) != -1) {
-				wordList.set(wordList.indexOf(keyVal), '_');
-				lines = lines.substring(0, wordList.indexOf(keyVal) - 1) + keyVal + lines.substring(wordList.indexOf(keyVal) + 1);
-				wordOut.setText(" Word: " + lines);
+			 
+			if (lifes < 1) {
+				System.out.println("YOU LOSE!");
+				JOptionPane.showMessageDialog(null, "YOU LOSE");
+				lockB = false;
+				
 			}
 		}
+		else {
+			
+			while (wordList.indexOf(keyVal) != -1) {
+				inverseWordList.set(wordList.indexOf(keyVal), keyVal);
+				wordList.set(wordList.indexOf(keyVal), '_');
+				
+				lines = inverseWordList.toString();
+				wordOut.setText(" Word: " + lines);
+			}
+			
+		}
+		
+		if (!inverseWordList.contains('_')) {
+			System.out.println("YOU WIN");
+			JOptionPane.showMessageDialog(null, "YOU WIN");
+			lockB = false;
+		}
+		
+		frame.pack();
 		
 	}
 
