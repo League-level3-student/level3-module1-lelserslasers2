@@ -24,10 +24,10 @@ public class HangMan implements KeyListener{
 	ArrayList<Character> wordList = new ArrayList<Character>();
 	ArrayList<Character> inverseWordList = new ArrayList<Character>();
 	int numOfWords;
-	boolean gameReapeat = true;
+	//boolean gameReapeat = true;
 	boolean newWord = true;
-	boolean lockA = false;
-	boolean lockB = false;
+	//boolean lockA = false;
+	//boolean lockB = false;
 	
 	void runOnce() {
 		panel.add(lifesOut);
@@ -42,7 +42,7 @@ public class HangMan implements KeyListener{
 	}
 	
 	void runPerGame() {
-		while (gameReapeat) {
+		//while (gameReapeat) {
 		lifes = 5;
 		words = new Stack<String>();
 		
@@ -58,9 +58,10 @@ public class HangMan implements KeyListener{
 			}
 			
 		}
+		frame.pack();
 		
-		runPerWord();
-		
+		runWord();
+		/*
 		lockA = true;
 		while (lockA) {
 			//System.out.print("!");
@@ -70,9 +71,32 @@ public class HangMan implements KeyListener{
 		if (a == "n") {
 			gameReapeat = false;
 		}
-		}
+		*/
+		//}
 	}
 	
+	void runWord() {
+		frame.pack();
+		lifes = 5;
+		inverseWordList = new ArrayList<Character>();
+		wordList = new ArrayList<Character>();
+		
+		word = words.pop();
+		lines = "";
+		for (int i = 0; i < word.length(); i++) {
+			lines = lines + "_";
+			inverseWordList.add('_');
+		}
+		lines = inverseWordList.toString();
+		wordOut.setText(" Word: " + lines);
+		lifesOut.setText("Lifes: " + lifes);
+		frame.pack();
+	
+		for (int i = 0; i < word.length(); i++) {
+			wordList.add(word.charAt(i));
+		}
+	}
+	/*
 	void runPerWord() {
 		for (int u = 0; u < words.size(); u++) {
 			frame.pack();
@@ -100,6 +124,7 @@ public class HangMan implements KeyListener{
 		}
 		lockA = false;
 	}
+	*/
 
 	@Override
 	public void keyPressed(KeyEvent e) {
@@ -111,7 +136,19 @@ public class HangMan implements KeyListener{
 			if (lifes < 1) {
 				System.out.println("YOU LOSE!");
 				JOptionPane.showMessageDialog(null, "YOU LOSE");
-				lockB = false;
+				//lockB = false;
+				if (words.empty()) {
+					String a = JOptionPane.showInputDialog("Play again? (y/n)");
+					if (a == "n") {
+						JOptionPane.showMessageDialog(null, "You can now close the window");
+					}
+					else {
+						runPerGame();
+					}
+				}
+				else {
+					runWord();
+				}
 				
 			}
 		}
@@ -130,7 +167,19 @@ public class HangMan implements KeyListener{
 		if (!inverseWordList.contains('_')) {
 			System.out.println("YOU WIN");
 			JOptionPane.showMessageDialog(null, "YOU WIN");
-			lockB = false;
+			//lockB = false;
+			if (words.empty()) {
+				String a = JOptionPane.showInputDialog("Play again? (y/n)");
+				if (a == "n") {
+					JOptionPane.showMessageDialog(null, "You can now close the window");
+				}
+				else {
+					runPerGame();
+				}
+			}
+			else {
+				runWord();
+			}
 		}
 		
 		frame.pack();
